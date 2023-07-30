@@ -7,11 +7,12 @@ import React, {
 } from "react"
 import cx from "classnames"
 import { useRequestAnimationFrame } from "./useRequestAnimationFrame"
-import { generateTwoNumbersInRange } from "./generateTwoNumbersInRange"
+import { generateRandomTuple } from "./generateRandomTuple"
 import Stars from "./images/vector-space.png"
 import Alien from "./images/alien.png"
 import Flame from "./images/flame.png"
 import Asteroid from "./images/asteroid.png"
+import { AnimatedBackground } from "./AnimatedBackground"
 
 const NUM_OF_PILLARS = 5
 const DIST_BETWEEN_PILLARS = 300
@@ -88,25 +89,20 @@ export default function App() {
         [React.createRef(), React.createRef()]
       ])
 
+      const multiplier = numOfLevel * 5
+
       if (i === 0) {
         // need more leniency here, first one.
-        if (windowHeight < 800) {
-          setPillarRefHeights([generateTwoNumbersInRange(40, 5, 35)])
-        } else {
-          setPillarRefHeights([generateTwoNumbersInRange(50, 5, 45)])
-        }
+        const minHeight = Math.min(10 + multiplier / 2, 75)
+        const maxHeight = Math.min(45 + multiplier / 2, 60)
+        setPillarRefHeights([generateRandomTuple(minHeight, maxHeight)])
       } else {
-        if (windowHeight < 800) {
-          setPillarRefHeights((prevHeights) => [
-            ...prevHeights,
-            generateTwoNumbersInRange(55, 5, 50)
-          ])
-        } else {
-          setPillarRefHeights((prevHeights) => [
-            ...prevHeights,
-            generateTwoNumbersInRange()
-          ])
-        }
+        const minHeight = Math.min(50 + multiplier / 2, 80)
+        const maxHeight = Math.min(80 + multiplier / 2, 85)
+        setPillarRefHeights((prevHeights) => [
+          ...prevHeights,
+          generateRandomTuple(minHeight, maxHeight)
+        ])
       }
     }
     setHasMounted(true)
@@ -234,6 +230,10 @@ export default function App() {
     return window.innerWidth * 0.7 + numPillars * DIST_BETWEEN_PILLARS
   }
 
+  const getSpeedOfScroll = () => {
+    return (getDistanceToScroll() / 2.5) * 10
+  }
+
   const getPlayerTransform = () => {
     if ((endOfLevelReached || startGame) && !playerUp) {
       return `translateY(${window.innerHeight * 2}px)`
@@ -248,10 +248,7 @@ export default function App() {
         <img
           src={Stars}
           className={cx(
-            "absolute left-0 bottom-0 h-auto w-[3077px] transition-transform max-w-none",
-            {
-              "translate-x-[-300px] duration-[30000ms]": startGame
-            }
+            "absolute left-0 bottom-0 h-auto w-[3077px] transition-transform max-w-none"
           )}
           style={{
             transform: startGame ? `translateX(-300px)` : undefined,
@@ -298,7 +295,7 @@ export default function App() {
           transform: startGame
             ? `translateX(${getDistanceToScroll() * -1}px)`
             : undefined,
-          transitionDuration: startGame ? "16000ms" : undefined
+          transitionDuration: startGame ? `${getSpeedOfScroll()}ms` : undefined
         }}
       >
         {pillarRefs.map(([refA, refB], index) => {
@@ -374,13 +371,20 @@ export default function App() {
         </div>
       </div>
 
-      {gameOver && (
-        <div className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center">
-          <div className="p-4 w-screen flex flex-col gap-2 justify-center items-center text-center">
-            <h2 className="text-7xl">GAME OVER </h2>
-            <p className="text-2xl">Level: {numOfLevel}</p>
-            <p className="text-2xl">Final Score: {gameScore}</p>
-            {/* <div className="mt-8">
+      <div
+        className={cx(
+          "veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center",
+          {
+            hidden: !gameOver
+          }
+        )}
+      >
+        <AnimatedBackground startGame={startGame} />
+        <div className=" relative p-4 w-screen flex flex-col gap-2 justify-center items-center text-center">
+          <h2 className="text-7xl mb-8 animate-pulse">GAME OVER </h2>
+          <p className="text-2xl">Level: {numOfLevel}</p>
+          <p className="text-2xl">Final Score: {gameScore}</p>
+          {/* <div className="mt-8">
               <h4 className="mb-2">Top Ten</h4>
               {highScores
                 .sort((a, b) => (a.score > b.score ? -1 : 1))
@@ -391,25 +395,25 @@ export default function App() {
                   </div>
                 ))}
             </div> */}
-            <div className="mt-8 flex justify-center items-center gap-8 flex-wrap">
-              <button
-                onClick={() => {
-                  setHasOverlap(false)
-                  setGameOver(false)
-                  setShowNewLevelScreen(false)
-                  setEndOfLevelReached(false)
-                  setGameScore(0)
-                  setLevelScore(0)
-                  setNumOfLevel(1)
-                }}
-                className="px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
-              >
-                Try again
-              </button>
-            </div>
+          <div className="mt-8 flex justify-center items-center gap-8 flex-wrap">
+            <button
+              onClick={() => {
+                setHasOverlap(false)
+                setGameOver(false)
+                setShowNewLevelScreen(false)
+                setEndOfLevelReached(false)
+                setGameScore(0)
+                setLevelScore(0)
+                setNumOfLevel(1)
+              }}
+              className="px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
+            >
+              Try again
+            </button>
           </div>
         </div>
-      )}
+      </div>
+
       <div
         className={cx(
           "veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center",
@@ -468,41 +472,7 @@ export default function App() {
             setShowTitleScreen(false)
           }}
         >
-          <div className="ImageWrap fixed inset-0 w-screen h-full">
-            <img
-              src={Stars}
-              className={cx(
-                "absolute left-0 bottom-0 h-auto w-[3077px] transition-transform max-w-none animate-title-screen"
-              )}
-              width={3000}
-              height={1834}
-              alt=""
-            />
-            <img
-              src={Stars}
-              className={cx(
-                "absolute left-[3000px] bottom-0 h-auto w-[3077px] transition-transform max-w-none",
-                {
-                  "duration-[30000ms]": startGame
-                }
-              )}
-              style={{
-                transform: startGame
-                  ? `translateX(-300px) scaleX(-1)`
-                  : undefined,
-                transitionDuration: startGame ? "30000ms" : undefined
-              }}
-              width={3000}
-              height={1834}
-              alt=""
-            />
-            <div
-              className="w-full h-full opacity-50"
-              style={{
-                background: "radial-gradient(rgb(26 31 59), rgb(0, 0, 0))"
-              }}
-            />
-          </div>
+          <AnimatedBackground startGame={startGame} />
           <div className="animate-pulse relative text-4xl">
             <h1 className="skew-x-6 leading-none rotate-[-20deg] text-7xl absolute inset-0 mt-0.5 ml-0.5">
               <p className="leading-none text-[#fff]">ASTRO</p>

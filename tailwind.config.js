@@ -1,5 +1,3 @@
-import { transform } from 'typescript'
-
 /** @type {import('tailwindcss').Config} */
 export default {
   mode: 'jit',
@@ -21,7 +19,7 @@ export default {
             transform: 'translateY(0)'
           },
           '100%': {
-            transform: 'translateY(100%)'
+            transform: 'translateY(-100%)'
           }
         },
         idleHover: {
