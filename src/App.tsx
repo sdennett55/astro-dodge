@@ -242,7 +242,7 @@ export default function App() {
           style={{ background: "radial-gradient(rgb(26 31 59), rgb(0, 0, 0))" }}
         />
       </div>
-      {startGame && (
+      {!gameOver && (
         <div className="fixed top-0 p-4 h-16 w-full text-2xl z-10">
           Score: {gameScore}
         </div>
@@ -293,27 +293,15 @@ export default function App() {
           {
             [` ease-linear`]: (endOfLevelReached || startGame) && !playerUp,
             [` ease-out-in`]: playerUp,
-            "rotate-90 ": hasOverlap
+            "rotate-180": hasOverlap && !gameOver
           }
         )}
         style={{
-          WebkitTransform:
-            (endOfLevelReached || startGame) && !playerUp
-              ? `translateY(${window.innerHeight}px)`
-              : playerUp
-              ? `translateY(${(window.innerHeight / 1.7) * -1}px)`
-              : undefined,
           transform:
             (endOfLevelReached || startGame) && !playerUp
               ? `translateY(${window.innerHeight}px)`
               : playerUp
               ? `translateY(${(window.innerHeight / 1.7) * -1}px)`
-              : undefined,
-          WebkitTransitionDuration:
-            (endOfLevelReached || startGame) && !playerUp
-              ? `2000ms`
-              : playerUp
-              ? `1300ms`
               : undefined,
           transitionDuration:
             (endOfLevelReached || startGame) && !playerUp
@@ -321,7 +309,6 @@ export default function App() {
               : playerUp
               ? `1300ms`
               : undefined,
-          WebkitTransitionProperty: "transform",
           transitionProperty: "transform"
         }}
       >
@@ -347,22 +334,24 @@ export default function App() {
         ></div>
       )}
       {gameOver && (
-        <div
-          className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center"
-          onClick={() => {
-            setStartGame(true)
-            setHasOverlap(false)
-            setGameOver(false)
-            setShowNewLevelScreen(false)
-            setEndOfLevelReached(false)
-            setGameScore(0)
-            setLevelScore(0)
-            setNumOfLevel(1)
-          }}
-        >
+        <div className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center">
           <div className="p-4 w-screen flex flex-col  justify-center items-center text-center">
             <h2 className="text-7xl">GAME OVER </h2>
             <p className="text-2xl">Final Score: {gameScore}</p>
+            <button
+              onClick={() => {
+                setHasOverlap(false)
+                setGameOver(false)
+                setShowNewLevelScreen(false)
+                setEndOfLevelReached(false)
+                setGameScore(0)
+                setLevelScore(0)
+                setNumOfLevel(1)
+              }}
+              className="px-4 py-2 rounded-md mt-8 bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
+            >
+              Try again
+            </button>
           </div>
         </div>
       )}

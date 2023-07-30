@@ -24,7 +24,7 @@ export default {
         }
       },
       animation: {
-        'level-screen': 'levelScreen 3s linear'
+        'level-screen': 'levelScreen 4s linear'
       }
     },
   },
