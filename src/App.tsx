@@ -28,6 +28,7 @@ export default function App() {
   const [hasOverlap, setHasOverlap] = useState(false)
   const [endOfLevelReached, setEndOfLevelReached] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
+  const [windowHeight, setWindowHeight] = useState(window.innerWidth)
   const playerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
   const [pillarRefHeights, setPillarRefHeights] = useState<[number, number][]>(
@@ -40,6 +41,15 @@ export default function App() {
 
   useEffect(() => {
     setHasMounted(true)
+
+    const updatewindowHeight = () => {
+      setWindowHeight(window.innerHeight)
+    }
+    window.addEventListener("resize", updatewindowHeight)
+
+    return () => {
+      window.removeEventListener("resize", updatewindowHeight)
+    }
   }, [])
 
   useEffect(() => {
@@ -67,16 +77,27 @@ export default function App() {
 
       if (i === 0) {
         // need more leniency here, first one.
-        setPillarRefHeights([generateTwoNumbersInRange(50, 5, 45)])
+        if (windowHeight < 800) {
+          setPillarRefHeights([generateTwoNumbersInRange(40, 5, 35)])
+        } else {
+          setPillarRefHeights([generateTwoNumbersInRange(50, 5, 45)])
+        }
       } else {
-        setPillarRefHeights((prevHeights) => [
-          ...prevHeights,
-          generateTwoNumbersInRange()
-        ])
+        if (windowHeight < 800) {
+          setPillarRefHeights((prevHeights) => [
+            ...prevHeights,
+            generateTwoNumbersInRange(55, 5, 50)
+          ])
+        } else {
+          setPillarRefHeights((prevHeights) => [
+            ...prevHeights,
+            generateTwoNumbersInRange()
+          ])
+        }
       }
     }
     setHasMounted(true)
-  }, [gameOver, numOfLevel])
+  }, [windowHeight, gameOver, numOfLevel])
 
   useEffect(() => {
     // reach end of level
@@ -149,7 +170,8 @@ export default function App() {
   useEffect(() => {
     let timeout: number
 
-    const goUp = () => {
+    const goUp = (e: PointerEvent) => {
+      e.preventDefault()
       if (!startGame) {
         return
       }
@@ -161,7 +183,8 @@ export default function App() {
       }
       setPlayerUp(true)
     }
-    const goDown = () => {
+    const goDown = (e: PointerEvent) => {
+      e.preventDefault()
       if (!startGame) {
         return
       }
@@ -207,7 +230,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden">
+    <div className="fixed inset-0 w-full h-full overflow-hidden">
       <div className="ImageWrap fixed inset-0 w-screen h-full">
         <img
           src={Stars}
@@ -391,6 +414,25 @@ export default function App() {
       >
         Level {numOfLevel + 1}
       </div>
+
+      {/* Essentially an invisible veil over the screen to prevent iOS long tapping issues */}
+      {startGame && (
+        <div
+          className="veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
+          onTouchStart={(e) => {
+            e.preventDefault()
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault()
+          }}
+          onTouchMove={(e) => {
+            e.preventDefault()
+          }}
+          onTouchCancel={(e) => {
+            e.preventDefault()
+          }}
+        />
+      )}
     </div>
   )
 }
