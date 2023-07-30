@@ -17,10 +17,10 @@ import { AnimatedBackground } from "./AnimatedBackground"
 const NUM_OF_PILLARS = 5
 const DIST_BETWEEN_PILLARS = 300
 
-type HighScore = {
-  name: string
-  score: number
-}
+// type HighScore = {
+//   name: string
+//   score: number
+// }
 
 export default function App() {
   const [numOfLevel, setNumOfLevel] = useState(1)
