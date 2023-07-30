@@ -48,7 +48,7 @@ export default {
       animation: {
         'level-screen': 'levelScreen 4s linear',
         'idle-hover': 'idleHover 1s linear infinite',
-        'title-screen': 'titleScreen 60s ease-in-out infinite'
+        'title-screen': 'titleScreen 60s ease-out infinite'
       }
     },
   },
