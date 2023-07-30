@@ -43,11 +43,10 @@ export default function App() {
 
   const [showTitleScreen, setShowTitleScreen] = useState(true)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [highScores, setHighScores] = useState<HighScore[]>([
-    { name: "steve", score: 10 },
-    { name: "steve", score: 23 }
-  ])
+  // const [highScores, setHighScores] = useState<HighScore[]>([
+  //   { name: "steve", score: 10 },
+  //   { name: "steve", score: 23 }
+  // ])
 
   const [pillarRefs, setPillarRefs] = useState<
     [React.RefObject<HTMLDivElement>, React.RefObject<HTMLDivElement>][]
