@@ -41,26 +41,18 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    console.log("overlap detected in useLayoutEffect outside hceck")
     if (hasOverlap) {
-      console.log("overlap detected in useLayoutEffect")
-      // setHasOverlap(false)
-      // setStartGame(false)
       setPlayerUp(false)
-      // setEndOfLevelReached(false)
 
       setTimeout(() => {
         setGameOver(true)
         setHasOverlap(false)
         setStartGame(false)
       }, 3000)
-      // setNumOfLevel(1)
-      // setHasOverlap(false)
-      // console.log('wtfwtfwtf THIS SHOULD BE OVERLAPPING')
     }
   }, [hasOverlap])
 
-  // set up pillars on new level change
+  // set up pillars on new level change or when the game ends
   useLayoutEffect(() => {
     setPillarRefs([])
     const numberOfDivs = NUM_OF_PILLARS + numOfLevel * 2
@@ -82,13 +74,12 @@ export default function App() {
       }
     }
     setHasMounted(true)
-  }, [numOfLevel])
+  }, [gameOver, numOfLevel])
 
   useEffect(() => {
     // reach end of level
     if (levelScore === NUM_OF_PILLARS + numOfLevel * 2) {
       setEndOfLevelReached(true)
-      // setNumOfLevel((prevLevel) => prevLevel + 1)
       setPlayerUp(true)
       setTimeout(() => {
         setShowNewLevelScreen(true)
@@ -104,22 +95,18 @@ export default function App() {
 
   const callback = useCallback(() => {
     if (!playerRef.current) {
-      console.log(1)
       return
     }
     if (!startGame) {
-      console.log(2)
       return
     }
     if (!hasMounted) {
-      console.log(3)
       return
     }
     if (hasOverlap) {
       return
     }
     if (endOfLevelReached) {
-      console.log(4)
       return
     }
 
@@ -199,6 +186,14 @@ export default function App() {
       return `translateX(70vw)`
     } else {
       return `translateX(calc(70vw + ${300 * index + 1}px)`
+    }
+  }
+
+  const getPlayerTransform = () => {
+    if ((endOfLevelReached || startGame) && !playerUp) {
+      return `translateY(${window.innerHeight}px)`
+    } else if (playerUp) {
+      return `translateY(${(window.innerHeight / 1.6) * -1}px)`
     }
   }
 
@@ -292,17 +287,11 @@ export default function App() {
           "fixed left-1/4 top-1/2 -mt-8 w-16 h-16 ease-linear will-change-transform",
           {
             [` ease-linear`]: (endOfLevelReached || startGame) && !playerUp,
-            [` ease-out-in`]: playerUp,
-            "rotate-180": hasOverlap && !gameOver
+            [` ease-out-in`]: playerUp
           }
         )}
         style={{
-          transform:
-            (endOfLevelReached || startGame) && !playerUp
-              ? `translateY(${window.innerHeight}px)`
-              : playerUp
-              ? `translateY(${(window.innerHeight / 1.7) * -1}px)`
-              : undefined,
+          transform: getPlayerTransform(),
           transitionDuration:
             (endOfLevelReached || startGame) && !playerUp
               ? `2000ms`
@@ -312,17 +301,23 @@ export default function App() {
           transitionProperty: "transform"
         }}
       >
-        <img src={Alien} alt="" />
-        <img
-          src={Flame}
-          alt=""
-          className={cx("m-auto max-w-none transition-opacity duration-200", {
-            "opacity-1": playerUp,
-            "opacity-0": !playerUp
+        <div
+          className={cx({
+            "rotate-180 duration-500": hasOverlap
           })}
-          width={41}
-          height={51}
-        />
+        >
+          <img src={Alien} alt="" />
+          <img
+            src={Flame}
+            alt=""
+            className={cx("m-auto max-w-none transition-opacity duration-200", {
+              "opacity-1": playerUp,
+              "opacity-0": !playerUp
+            })}
+            width={41}
+            height={51}
+          />
+        </div>
       </div>
       {!startGame && (
         <div
