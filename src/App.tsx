@@ -14,6 +14,7 @@ import Flame from "./images/flame.png"
 import Asteroid from "./images/asteroid.png"
 
 const NUM_OF_PILLARS = 5
+const DIST_BETWEEN_PILLARS = 300
 
 export default function App() {
   const [numOfLevel, setNumOfLevel] = useState(1)
@@ -23,6 +24,7 @@ export default function App() {
   const [gameScore, setGameScore] = useState(0)
   const [showNewLevelScreen, setShowNewLevelScreen] = useState(false)
   const [gameOver, setGameOver] = useState(false)
+  const [showFlame, setShowFlame] = useState(false)
   const [hasOverlap, setHasOverlap] = useState(false)
   const [endOfLevelReached, setEndOfLevelReached] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
@@ -83,6 +85,7 @@ export default function App() {
       setPlayerUp(true)
       setTimeout(() => {
         setShowNewLevelScreen(true)
+        setShowFlame(false)
       }, 3000)
     }
   }, [levelScore, numOfLevel])
@@ -185,8 +188,14 @@ export default function App() {
     if (index === 0) {
       return `translateX(70vw)`
     } else {
-      return `translateX(calc(70vw + ${300 * index + 1}px)`
+      return `translateX(calc(70vw + ${DIST_BETWEEN_PILLARS * index}px)`
     }
+  }
+
+  const getDistanceToScroll = () => {
+    const numPillars = NUM_OF_PILLARS + numOfLevel * 2
+
+    return window.innerWidth * 0.7 + numPillars * DIST_BETWEEN_PILLARS
   }
 
   const getPlayerTransform = () => {
@@ -250,7 +259,9 @@ export default function App() {
           "transition-transform ease-linear": startGame
         })}
         style={{
-          transform: startGame ? `translateX(-4000px)` : undefined,
+          transform: startGame
+            ? `translateX(${getDistanceToScroll() * -1}px)`
+            : undefined,
           transitionDuration: startGame ? "16000ms" : undefined
         }}
       >
@@ -286,8 +297,8 @@ export default function App() {
         className={cx(
           "fixed left-1/4 top-1/2 -mt-8 w-16 h-16 ease-linear will-change-transform",
           {
-            [` ease-linear`]: (endOfLevelReached || startGame) && !playerUp,
-            [` ease-out-in`]: playerUp
+            "ease-linear": (endOfLevelReached || startGame) && !playerUp,
+            "ease-out-in": playerUp
           }
         )}
         style={{
@@ -302,21 +313,28 @@ export default function App() {
         }}
       >
         <div
-          className={cx({
-            "rotate-180 duration-500": hasOverlap
+          className={cx("transition-transform", {
+            "duration-200": !hasOverlap,
+            "rotate-180 duration-500": hasOverlap,
+            "animate-idle-hover": !startGame
           })}
         >
           <img src={Alien} alt="" />
-          <img
-            src={Flame}
-            alt=""
-            className={cx("m-auto max-w-none transition-opacity duration-200", {
-              "opacity-1": playerUp,
-              "opacity-0": !playerUp
-            })}
-            width={41}
-            height={51}
-          />
+          {showFlame && (
+            <img
+              src={Flame}
+              alt=""
+              className={cx(
+                "m-auto max-w-none transition-opacity duration-200",
+                {
+                  "opacity-1": playerUp,
+                  "opacity-0": !playerUp
+                }
+              )}
+              width={41}
+              height={51}
+            />
+          )}
         </div>
       </div>
       {!startGame && (
@@ -325,13 +343,15 @@ export default function App() {
           onClick={() => {
             setStartGame(true)
             setHasOverlap(false)
+            setShowFlame(true)
           }}
         ></div>
       )}
       {gameOver && (
         <div className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center">
-          <div className="p-4 w-screen flex flex-col  justify-center items-center text-center">
+          <div className="p-4 w-screen flex flex-col gap-2  justify-center items-center text-center">
             <h2 className="text-7xl">GAME OVER </h2>
+            <p className="text-2xl">Levels reached: {numOfLevel}</p>
             <p className="text-2xl">Final Score: {gameScore}</p>
             <button
               onClick={() => {
