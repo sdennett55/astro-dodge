@@ -351,7 +351,7 @@ export default function App() {
         <div className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center">
           <div className="p-4 w-screen flex flex-col gap-2  justify-center items-center text-center">
             <h2 className="text-7xl">GAME OVER </h2>
-            <p className="text-2xl">Levels reached: {numOfLevel}</p>
+            <p className="text-2xl">Level: {numOfLevel}</p>
             <p className="text-2xl">Final Score: {gameScore}</p>
             <button
               onClick={() => {
