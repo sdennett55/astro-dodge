@@ -223,9 +223,9 @@ export default function App() {
 
   const getPlayerTransform = () => {
     if ((endOfLevelReached || startGame) && !playerUp) {
-      return `translateY(${window.innerHeight}px)`
+      return `translateY(${window.innerHeight * 2}px)`
     } else if (playerUp) {
-      return `translateY(${(window.innerHeight / 1.6) * -1}px)`
+      return `translateY(${window.innerHeight * -1}px)`
     }
   }
 
@@ -318,9 +318,9 @@ export default function App() {
       <div
         ref={playerRef}
         className={cx(
-          "fixed left-1/4 top-1/2 -mt-8 w-16 h-16 ease-linear will-change-transform",
+          "fixed left-1/4 top-1/2 -mt-8 w-16 h-16 ease-in will-change-transform",
           {
-            "ease-linear": (endOfLevelReached || startGame) && !playerUp,
+            "ease-in": (endOfLevelReached || startGame) && !playerUp,
             "ease-out-in": playerUp
           }
         )}
@@ -330,7 +330,7 @@ export default function App() {
             (endOfLevelReached || startGame) && !playerUp
               ? `2000ms`
               : playerUp
-              ? `1300ms`
+              ? `2000ms`
               : undefined,
           transitionProperty: "transform"
         }}
