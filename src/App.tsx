@@ -313,8 +313,8 @@ export default function App() {
         }}
       >
         <div
-          className={cx("transition-transform", {
-            "duration-200": !hasOverlap,
+          className={cx({
+            "duration-0 transition-transform ": !hasOverlap,
             "rotate-180 duration-500": hasOverlap,
             "animate-idle-hover": !startGame
           })}
