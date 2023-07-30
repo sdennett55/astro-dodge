@@ -16,6 +16,11 @@ import Asteroid from "./images/asteroid.png"
 const NUM_OF_PILLARS = 5
 const DIST_BETWEEN_PILLARS = 300
 
+type HighScore = {
+  name: string
+  score: number
+}
+
 export default function App() {
   const [numOfLevel, setNumOfLevel] = useState(1)
   const [startGame, setStartGame] = useState(false)
@@ -34,6 +39,14 @@ export default function App() {
   const [pillarRefHeights, setPillarRefHeights] = useState<[number, number][]>(
     []
   )
+
+  const [showTitleScreen, setShowTitleScreen] = useState(true)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [highScores, setHighScores] = useState<HighScore[]>([
+    { name: "steve", score: 10 },
+    { name: "steve", score: 23 }
+  ])
 
   const [pillarRefs, setPillarRefs] = useState<
     [React.RefObject<HTMLDivElement>, React.RefObject<HTMLDivElement>][]
@@ -269,7 +282,7 @@ export default function App() {
           style={{ background: "radial-gradient(rgb(26 31 59), rgb(0, 0, 0))" }}
         />
       </div>
-      {!gameOver && (
+      {!showTitleScreen && !gameOver && (
         <div className="fixed top-0 p-4 h-16 w-full text-2xl z-10">
           Score: {gameScore}
         </div>
@@ -360,36 +373,40 @@ export default function App() {
           )}
         </div>
       </div>
-      {!startGame && (
-        <div
-          className="veil fixed w-full h-full inset-0 bg-black-100 bg-opacity-50 text-white text-4xl flex justify-center items-center"
-          onClick={() => {
-            setStartGame(true)
-            setHasOverlap(false)
-            setShowFlame(true)
-          }}
-        ></div>
-      )}
+
       {gameOver && (
         <div className="veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center">
-          <div className="p-4 w-screen flex flex-col gap-2  justify-center items-center text-center">
+          <div className="p-4 w-screen flex flex-col gap-2 justify-center items-center text-center">
             <h2 className="text-7xl">GAME OVER </h2>
             <p className="text-2xl">Level: {numOfLevel}</p>
             <p className="text-2xl">Final Score: {gameScore}</p>
-            <button
-              onClick={() => {
-                setHasOverlap(false)
-                setGameOver(false)
-                setShowNewLevelScreen(false)
-                setEndOfLevelReached(false)
-                setGameScore(0)
-                setLevelScore(0)
-                setNumOfLevel(1)
-              }}
-              className="px-4 py-2 rounded-md mt-8 bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
-            >
-              Try again
-            </button>
+            {/* <div className="mt-8">
+              <h4 className="mb-2">Top Ten</h4>
+              {highScores
+                .sort((a, b) => (a.score > b.score ? -1 : 1))
+                .map(({ name, score }) => (
+                  <div className="grid grid-cols-12 text-left">
+                    <div className="col-span-10">{name}</div>{" "}
+                    <div className="col-span-2 text-right">{score}</div>
+                  </div>
+                ))}
+            </div> */}
+            <div className="mt-8 flex justify-center items-center gap-8 flex-wrap">
+              <button
+                onClick={() => {
+                  setHasOverlap(false)
+                  setGameOver(false)
+                  setShowNewLevelScreen(false)
+                  setEndOfLevelReached(false)
+                  setGameScore(0)
+                  setLevelScore(0)
+                  setNumOfLevel(1)
+                }}
+                className="px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
+              >
+                Try again
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -418,7 +435,7 @@ export default function App() {
       {/* Essentially an invisible veil over the screen to prevent iOS long tapping issues */}
       {startGame && (
         <div
-          className="veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
+          className=" veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
           onTouchStart={(e) => {
             e.preventDefault()
           }}
@@ -432,6 +449,72 @@ export default function App() {
             e.preventDefault()
           }}
         />
+      )}
+      {!startGame && !gameOver && (
+        <div
+          className="wtfwtfwtf veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
+          onClick={() => {
+            setGameOver(false)
+            setStartGame(true)
+            setHasOverlap(false)
+            setShowFlame(true)
+          }}
+        />
+      )}
+      {showTitleScreen && (
+        <div
+          className="veil leading-none fixed w-full h-full inset-0 text-white text-4xl flex flex-col justify-center items-center"
+          onClick={() => {
+            setShowTitleScreen(false)
+          }}
+        >
+          <div className="ImageWrap fixed inset-0 w-screen h-full">
+            <img
+              src={Stars}
+              className={cx(
+                "absolute left-0 bottom-0 h-auto w-[3077px] transition-transform max-w-none animate-title-screen"
+              )}
+              width={3000}
+              height={1834}
+              alt=""
+            />
+            <img
+              src={Stars}
+              className={cx(
+                "absolute left-[3000px] bottom-0 h-auto w-[3077px] transition-transform max-w-none",
+                {
+                  "duration-[30000ms]": startGame
+                }
+              )}
+              style={{
+                transform: startGame
+                  ? `translateX(-300px) scaleX(-1)`
+                  : undefined,
+                transitionDuration: startGame ? "30000ms" : undefined
+              }}
+              width={3000}
+              height={1834}
+              alt=""
+            />
+            <div
+              className="w-full h-full opacity-50"
+              style={{
+                background: "radial-gradient(rgb(26 31 59), rgb(0, 0, 0))"
+              }}
+            />
+          </div>
+          <div className="animate-pulse relative text-4xl">
+            <h1 className="skew-x-6 leading-none rotate-[-20deg] text-7xl absolute inset-0 mt-0.5 ml-0.5">
+              <p className="leading-none text-[#fff]">ASTRO</p>
+              <p className="ml-5 leading-none -mt-4  text-[#fff]">DODGE</p>
+            </h1>
+            <h1 className="skew-x-6 leading-none rotate-[-20deg] text-7xl">
+              <p className="leading-none text-[#6fc4a9]">ASTRO</p>
+              <p className="ml-5 leading-none -mt-4 text-[#8db5e7]">DODGE</p>
+            </h1>
+          </div>
+          <p className="relative mt-16 text-lg">Tap to play</p>
+        </div>
       )}
     </div>
   )
