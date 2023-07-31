@@ -306,7 +306,7 @@ export default function App() {
                 style={{
                   backgroundImage: `url(${Asteroid})`,
                   transform: getTranslateX(index),
-                  height: pillarRefHeights[index][0] + "vh",
+                  height: pillarRefHeights[index][0] + "%",
                   backgroundSize: "100%"
                 }}
               />
@@ -316,7 +316,7 @@ export default function App() {
                 style={{
                   backgroundImage: `url(${Asteroid}) `,
                   transform: getTranslateX(index),
-                  height: pillarRefHeights[index][1] + "vh",
+                  height: pillarRefHeights[index][1] + "%",
                   backgroundSize: "100%"
                 }}
               />
@@ -380,7 +380,7 @@ export default function App() {
       >
         <AnimatedBackground startGame={startGame} />
         <div className=" relative p-4 w-screen flex flex-col gap-2 justify-center items-center text-center">
-          <h2 className="text-7xl mb-8 animate-pulse">GAME OVER </h2>
+          <h2 className="text-7xl mb-8">GAME OVER </h2>
           <p className="text-2xl">Level: {numOfLevel}</p>
           <p className="text-2xl">Final Score: {gameScore}</p>
           {/* <div className="mt-8">
@@ -405,7 +405,7 @@ export default function App() {
                 setLevelScore(0)
                 setNumOfLevel(1)
               }}
-              className="px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
+              className="animate-pulse px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
             >
               Try again
             </button>
@@ -473,7 +473,7 @@ export default function App() {
         >
           <AnimatedBackground startGame={startGame} />
           <div className="animate-pulse relative text-4xl">
-            <h1 className="skew-x-6 leading-none rotate-[-20deg] text-7xl absolute inset-0 mt-0.5 ml-0.5">
+            <h1 className="skew-x-6 leading-none rotate-[-20deg] text-7xl absolute inset-0 -mt-0.5 -ml-0.5">
               <p className="leading-none text-[#fff]">ASTRO</p>
               <p className="ml-5 leading-none -mt-4  text-[#fff]">DODGE</p>
             </h1>
