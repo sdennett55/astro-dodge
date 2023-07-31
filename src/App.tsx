@@ -466,7 +466,7 @@ export default function App() {
       )}
       {showTitleScreen && (
         <div
-          className="veil leading-none fixed w-full h-full inset-0 text-white text-4xl flex flex-col justify-center items-center"
+          className="veil leading-none fixed w-full h-full bg-[#091c3e] inset-0 text-white text-4xl flex flex-col justify-center items-center"
           onClick={() => {
             setShowTitleScreen(false)
           }}
