@@ -3,19 +3,19 @@ import React, {
   useEffect,
   useLayoutEffect,
   useRef,
-  useState
-} from "react"
-import cx from "classnames"
-import { useRequestAnimationFrame } from "./useRequestAnimationFrame"
-import { generateRandomTuple } from "./generateRandomTuple"
-import Stars from "./images/vector-space.png"
-import Alien from "./images/alien.png"
-import Flame from "./images/flame.png"
-import Asteroid from "./images/asteroid.png"
-import { AnimatedBackground } from "./AnimatedBackground"
+  useState,
+} from "react";
+import cx from "classnames";
+import { useRequestAnimationFrame } from "./useRequestAnimationFrame";
+import { generateRandomTuple } from "./generateRandomTuple";
+import Stars from "./images/vector-space.png";
+import Alien from "./images/alien.png";
+import Flame from "./images/flame.png";
+import Asteroid from "./images/asteroid.png";
+import { AnimatedBackground } from "./AnimatedBackground";
 
-const NUM_OF_PILLARS = 5
-const DIST_BETWEEN_PILLARS = 300
+const NUM_OF_PILLARS = 5;
+const DIST_BETWEEN_PILLARS = 300;
 
 // type HighScore = {
 //   name: string
@@ -23,25 +23,25 @@ const DIST_BETWEEN_PILLARS = 300
 // }
 
 export default function App() {
-  const [numOfLevel, setNumOfLevel] = useState(1)
-  const [startGame, setStartGame] = useState(false)
-  const [playerUp, setPlayerUp] = useState(false)
-  const [levelScore, setLevelScore] = useState(0)
-  const [gameScore, setGameScore] = useState(0)
-  const [showNewLevelScreen, setShowNewLevelScreen] = useState(false)
-  const [gameOver, setGameOver] = useState(false)
-  const [showFlame, setShowFlame] = useState(false)
-  const [hasOverlap, setHasOverlap] = useState(false)
-  const [endOfLevelReached, setEndOfLevelReached] = useState(false)
-  const [hasMounted, setHasMounted] = useState(false)
-  const [windowHeight, setWindowHeight] = useState(window.innerWidth)
-  const playerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<HTMLDivElement>(null)
+  const [numOfLevel, setNumOfLevel] = useState(1);
+  const [startGame, setStartGame] = useState(false);
+  const [playerUp, setPlayerUp] = useState(false);
+  const [levelScore, setLevelScore] = useState(0);
+  const [gameScore, setGameScore] = useState(0);
+  const [showNewLevelScreen, setShowNewLevelScreen] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [showFlame, setShowFlame] = useState(false);
+  const [hasOverlap, setHasOverlap] = useState(false);
+  const [endOfLevelReached, setEndOfLevelReached] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(window.innerWidth);
+  const playerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const [pillarRefHeights, setPillarRefHeights] = useState<[number, number][]>(
     []
-  )
+  );
 
-  const [showTitleScreen, setShowTitleScreen] = useState(true)
+  const [showTitleScreen, setShowTitleScreen] = useState(true);
 
   // const [highScores, setHighScores] = useState<HighScore[]>([
   //   { name: "steve", score: 10 },
@@ -50,104 +50,104 @@ export default function App() {
 
   const [pillarRefs, setPillarRefs] = useState<
     [React.RefObject<HTMLDivElement>, React.RefObject<HTMLDivElement>][]
-  >([])
+  >([]);
 
   useEffect(() => {
-    setHasMounted(true)
+    setHasMounted(true);
 
     const updatewindowHeight = () => {
-      setWindowHeight(window.innerHeight)
-    }
-    window.addEventListener("resize", updatewindowHeight)
+      setWindowHeight(window.innerHeight);
+    };
+    window.addEventListener("resize", updatewindowHeight);
 
     return () => {
-      window.removeEventListener("resize", updatewindowHeight)
-    }
-  }, [])
+      window.removeEventListener("resize", updatewindowHeight);
+    };
+  }, []);
 
   useEffect(() => {
     if (hasOverlap) {
-      setPlayerUp(false)
+      setPlayerUp(false);
 
       setTimeout(() => {
-        setGameOver(true)
-        setHasOverlap(false)
-        setStartGame(false)
-      }, 3000)
+        setGameOver(true);
+        setHasOverlap(false);
+        setStartGame(false);
+      }, 3000);
     }
-  }, [hasOverlap])
+  }, [hasOverlap]);
 
   // set up pillars on new level change or when the game ends
   useLayoutEffect(() => {
-    setPillarRefs([])
-    const numberOfDivs = NUM_OF_PILLARS + numOfLevel * 2
+    setPillarRefs([]);
+    const numberOfDivs = NUM_OF_PILLARS + numOfLevel * 2;
     // Initialize the refs with useRef and add them to the divRefs array
     for (let i = 0; i < numberOfDivs; i++) {
       setPillarRefs((prevRefs) => [
         ...prevRefs,
-        [React.createRef(), React.createRef()]
-      ])
+        [React.createRef(), React.createRef()],
+      ]);
 
-      const multiplier = numOfLevel * 5
+      const multiplier = numOfLevel * 5;
 
       if (i === 0) {
         // need more leniency here, first one.
-        const minHeight = Math.min(10 + multiplier / 2, 75)
-        const maxHeight = Math.min(45 + multiplier / 2, 60)
-        setPillarRefHeights([generateRandomTuple(minHeight, maxHeight)])
+        const minHeight = Math.min(10 + multiplier / 2, 75);
+        const maxHeight = Math.min(45 + multiplier / 2, 60);
+        setPillarRefHeights([generateRandomTuple(minHeight, maxHeight)]);
       } else {
-        const minHeight = Math.min(50 + multiplier / 2, 80)
-        const maxHeight = Math.min(80 + multiplier / 2, 85)
+        const minHeight = Math.min(50 + multiplier / 2, 80);
+        const maxHeight = Math.min(80 + multiplier / 2, 85);
         setPillarRefHeights((prevHeights) => [
           ...prevHeights,
-          generateRandomTuple(minHeight, maxHeight)
-        ])
+          generateRandomTuple(minHeight, maxHeight),
+        ]);
       }
     }
-    setHasMounted(true)
-  }, [windowHeight, gameOver, numOfLevel])
+    setHasMounted(true);
+  }, [windowHeight, gameOver, numOfLevel]);
 
   useEffect(() => {
     // reach end of level
     if (levelScore === NUM_OF_PILLARS + numOfLevel * 2) {
-      setEndOfLevelReached(true)
-      setPlayerUp(true)
+      setEndOfLevelReached(true);
+      setPlayerUp(true);
       setTimeout(() => {
-        setShowNewLevelScreen(true)
-        setShowFlame(false)
-      }, 3000)
+        setShowNewLevelScreen(true);
+        setShowFlame(false);
+      }, 3000);
     }
-  }, [levelScore, numOfLevel])
+  }, [levelScore, numOfLevel]);
 
   useEffect(() => {
     if (levelScore) {
-      setGameScore((prevScore) => prevScore + 1)
+      setGameScore((prevScore) => prevScore + 1);
     }
-  }, [levelScore])
+  }, [levelScore]);
 
   const callback = useCallback(() => {
     if (!playerRef.current) {
-      return
+      return;
     }
     if (!startGame) {
-      return
+      return;
     }
     if (!hasMounted) {
-      return
+      return;
     }
     if (hasOverlap) {
-      return
+      return;
     }
     if (endOfLevelReached) {
-      return
+      return;
     }
 
-    const player = playerRef.current.getBoundingClientRect()
+    const player = playerRef.current.getBoundingClientRect();
 
     const pillarCoords = pillarRefs
       .flatMap((refTuple) => refTuple)
       .filter((ref) => ref.current !== null)
-      .map((ref) => ref.current!.getBoundingClientRect())
+      .map((ref) => ref.current!.getBoundingClientRect());
 
     const isOverlapping = pillarCoords.some((rect) => {
       // Check for overlap
@@ -159,90 +159,90 @@ export default function App() {
           player.top > rect.bottom
         ) ||
         player.y < 0 ||
-        player.y > window.innerHeight - player.height
-      return overlap
-    })
+        player.y > window.innerHeight - player.height;
+      return overlap;
+    });
 
     if (isOverlapping) {
-      setHasOverlap(true)
+      setHasOverlap(true);
     }
 
     const score =
       pillarCoords.filter((pillar) => player.left - player.width > pillar.left)
-        .length / 2
-    setLevelScore(score)
-  }, [hasOverlap, startGame, endOfLevelReached, hasMounted, pillarRefs])
+        .length / 2;
+    setLevelScore(score);
+  }, [hasOverlap, startGame, endOfLevelReached, hasMounted, pillarRefs]);
 
-  useRequestAnimationFrame(callback)
+  useRequestAnimationFrame(callback);
 
   useEffect(() => {
-    let timeout: number
+    let timeout: number;
 
     const goUp = (e: PointerEvent) => {
-      e.preventDefault()
+      e.preventDefault();
       if (!startGame) {
-        return
+        return;
       }
       if (endOfLevelReached) {
-        return
+        return;
       }
       if (hasOverlap) {
-        return
+        return;
       }
-      setPlayerUp(true)
-    }
+      setPlayerUp(true);
+    };
     const goDown = (e: PointerEvent) => {
-      e.preventDefault()
+      e.preventDefault();
       if (!startGame) {
-        return
+        return;
       }
       if (endOfLevelReached) {
-        return
+        return;
       }
       if (hasOverlap) {
-        return
+        return;
       }
-      setPlayerUp(false)
-    }
+      setPlayerUp(false);
+    };
 
-    window.addEventListener("pointerdown", goUp)
-    window.addEventListener("pointerup", goDown)
+    window.addEventListener("pointerdown", goUp);
+    window.addEventListener("pointerup", goDown);
 
     return () => {
-      window.removeEventListener("pointerdown", goUp)
-      window.removeEventListener("pointerup", goDown)
-      clearTimeout(timeout)
-    }
-  }, [endOfLevelReached, hasOverlap, startGame])
+      window.removeEventListener("pointerdown", goUp);
+      window.removeEventListener("pointerup", goDown);
+      clearTimeout(timeout);
+    };
+  }, [endOfLevelReached, hasOverlap, startGame]);
 
   const getTranslateX = (index: number) => {
     if (index === 0) {
-      return `translateX(70vw)`
+      return `translateX(70vw)`;
     } else {
-      return `translateX(calc(70vw + ${DIST_BETWEEN_PILLARS * index}px)`
+      return `translateX(calc(70vw + ${DIST_BETWEEN_PILLARS * index}px)`;
     }
-  }
+  };
 
   const getDistanceToScroll = () => {
-    const numPillars = NUM_OF_PILLARS + numOfLevel * 2
+    const numPillars = NUM_OF_PILLARS + numOfLevel * 2;
 
-    return window.innerWidth * 0.7 + numPillars * DIST_BETWEEN_PILLARS
-  }
+    return window.innerWidth * 0.7 + numPillars * DIST_BETWEEN_PILLARS;
+  };
 
   const getSpeedOfScroll = () => {
-    return (getDistanceToScroll() / 2.5) * 10
-  }
+    return (getDistanceToScroll() / 2.5) * 10;
+  };
 
   const getPlayerTransform = () => {
     if ((endOfLevelReached || startGame) && !playerUp) {
-      return `translateY(${window.innerHeight * 2}px)`
+      return `translateY(${window.innerHeight * 2}px)`;
     } else if (playerUp) {
-      return `translateY(${window.innerHeight * -1}px)`
+      return `translateY(${window.innerHeight * -1}px)`;
     }
-  }
+  };
 
   return (
-    <div className="fixed inset-0 w-full h-full overflow-hidden">
+    <div className="fixed inset-0 w-full h-full overflow-hidden text-white">
       <div className="ImageWrap fixed inset-0 w-screen h-full">
         <img
           src={Stars}
@@ -251,7 +251,7 @@ export default function App() {
           )}
           style={{
             transform: startGame ? `translateX(-300px)` : undefined,
-            transitionDuration: startGame ? "30000ms" : undefined
+            transitionDuration: startGame ? "30000ms" : undefined,
           }}
           width={3000}
           height={1834}
@@ -262,12 +262,12 @@ export default function App() {
           className={cx(
             "absolute left-[3000px] bottom-0 h-auto w-[3077px] transition-transform max-w-none",
             {
-              "duration-[30000ms]": startGame
+              "duration-[30000ms]": startGame,
             }
           )}
           style={{
             transform: startGame ? `translateX(-300px) scaleX(-1)` : undefined,
-            transitionDuration: startGame ? "30000ms" : undefined
+            transitionDuration: startGame ? "30000ms" : undefined,
           }}
           width={3000}
           height={1834}
@@ -288,13 +288,13 @@ export default function App() {
       <div
         ref={mapRef}
         className={cx("relative h-full z-1", {
-          "transition-transform ease-linear": startGame
+          "transition-transform ease-linear": startGame,
         })}
         style={{
           transform: startGame
             ? `translateX(${getDistanceToScroll() * -1}px)`
             : undefined,
-          transitionDuration: startGame ? `${getSpeedOfScroll()}ms` : undefined
+          transitionDuration: startGame ? `${getSpeedOfScroll()}ms` : undefined,
         }}
       >
         {pillarRefs.map(([refA, refB], index) => {
@@ -307,7 +307,7 @@ export default function App() {
                   backgroundImage: `url(${Asteroid})`,
                   transform: getTranslateX(index),
                   height: pillarRefHeights[index][0] + "%",
-                  backgroundSize: "100%"
+                  backgroundSize: "100%",
                 }}
               />
               <div
@@ -317,11 +317,11 @@ export default function App() {
                   backgroundImage: `url(${Asteroid}) `,
                   transform: getTranslateX(index),
                   height: pillarRefHeights[index][1] + "%",
-                  backgroundSize: "100%"
+                  backgroundSize: "100%",
                 }}
               />
             </div>
-          )
+          );
         })}
       </div>
       <div
@@ -330,7 +330,7 @@ export default function App() {
           "fixed left-1/4 top-1/2 -mt-8 w-16 h-16 ease-in will-change-transform",
           {
             "ease-in": (endOfLevelReached || startGame) && !playerUp,
-            "ease-out-in": playerUp
+            "ease-out-in": playerUp,
           }
         )}
         style={{
@@ -341,14 +341,14 @@ export default function App() {
               : playerUp
               ? `2000ms`
               : undefined,
-          transitionProperty: "transform"
+          transitionProperty: "transform",
         }}
       >
         <div
           className={cx({
             "duration-0 transition-transform ": !hasOverlap,
             "rotate-180 duration-500": hasOverlap,
-            "animate-idle-hover": !startGame
+            "animate-idle-hover": !startGame,
           })}
         >
           <img src={Alien} alt="" />
@@ -360,7 +360,7 @@ export default function App() {
                 "m-auto max-w-none transition-opacity duration-200",
                 {
                   "opacity-1": playerUp,
-                  "opacity-0": !playerUp
+                  "opacity-0": !playerUp,
                 }
               )}
               width={41}
@@ -374,7 +374,7 @@ export default function App() {
         className={cx(
           "veil fixed w-full h-full inset-0 bg-black bg-opacity-50 text-white text-4xl flex justify-center items-center",
           {
-            hidden: !gameOver
+            hidden: !gameOver,
           }
         )}
       >
@@ -397,13 +397,13 @@ export default function App() {
           <div className="mt-8 flex justify-center items-center gap-8 flex-wrap">
             <button
               onClick={() => {
-                setHasOverlap(false)
-                setGameOver(false)
-                setShowNewLevelScreen(false)
-                setEndOfLevelReached(false)
-                setGameScore(0)
-                setLevelScore(0)
-                setNumOfLevel(1)
+                setHasOverlap(false);
+                setGameOver(false);
+                setShowNewLevelScreen(false);
+                setEndOfLevelReached(false);
+                setGameScore(0);
+                setLevelScore(0);
+                setNumOfLevel(1);
               }}
               className="animate-pulse px-4 py-2 rounded-md bg-[#5caa91] text-black outline-none hover:bg-[#7dcab1] focus:bg-[#7dcab1] transition-all"
             >
@@ -417,19 +417,19 @@ export default function App() {
         className={cx(
           "veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center",
           {
-            "animate-level-screen": showNewLevelScreen
+            "animate-level-screen": showNewLevelScreen,
           }
         )}
         style={{
-          transform: "translateY(-100%)"
+          transform: "translateY(-100%)",
         }}
         onAnimationEnd={() => {
-          setPlayerUp(false)
-          setEndOfLevelReached(false)
-          setHasOverlap(false)
-          setStartGame(false)
-          setShowNewLevelScreen(false)
-          setNumOfLevel((prevLevel) => prevLevel + 1)
+          setPlayerUp(false);
+          setEndOfLevelReached(false);
+          setHasOverlap(false);
+          setStartGame(false);
+          setShowNewLevelScreen(false);
+          setNumOfLevel((prevLevel) => prevLevel + 1);
         }}
       >
         Level {numOfLevel + 1}
@@ -440,16 +440,16 @@ export default function App() {
         <div
           className=" veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
           onTouchStart={(e) => {
-            e.preventDefault()
+            e.preventDefault();
           }}
           onTouchEnd={(e) => {
-            e.preventDefault()
+            e.preventDefault();
           }}
           onTouchMove={(e) => {
-            e.preventDefault()
+            e.preventDefault();
           }}
           onTouchCancel={(e) => {
-            e.preventDefault()
+            e.preventDefault();
           }}
         />
       )}
@@ -457,10 +457,10 @@ export default function App() {
         <div
           className="wtfwtfwtf veil fixed w-full h-full inset-0 text-7xl duration-0 flex justify-center items-center"
           onClick={() => {
-            setGameOver(false)
-            setStartGame(true)
-            setHasOverlap(false)
-            setShowFlame(true)
+            setGameOver(false);
+            setStartGame(true);
+            setHasOverlap(false);
+            setShowFlame(true);
           }}
         />
       )}
@@ -468,7 +468,7 @@ export default function App() {
         <div
           className="veil leading-none fixed w-full h-full bg-[#091c3e] inset-0 text-white text-4xl flex flex-col justify-center items-center"
           onClick={() => {
-            setShowTitleScreen(false)
+            setShowTitleScreen(false);
           }}
         >
           <AnimatedBackground startGame={startGame} />
@@ -486,5 +486,5 @@ export default function App() {
         </div>
       )}
     </div>
-  )
+  );
 }
